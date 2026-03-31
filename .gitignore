@@ -20,9 +20,17 @@ node_modules
 # misc
 .DS_Store
 
-# IDE
+# IDE & AI tools
 .vscode
 .idea
+.cursor
+.claude
+.agents
+.opencode
+.mcp.json
+AGENTS.md
+CLAUDE.md
+opencode.json
 
 # cli
 dist
