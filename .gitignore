@@ -34,3 +34,5 @@ opencode.json
 
 # cli
 dist
+
+push_to_github.bat
