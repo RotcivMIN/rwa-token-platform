@@ -111,14 +111,6 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
         require(!_admins[account], "RWAToken: already an admin");
 
         _admins[account] = true;
-
-        // 管理员自动加入白名单（如果尚未加入）
-        if (!_whitelist[account]) {
-            _whitelist[account] = true;
-            _whitelistedAddresses.push(account);
-            emit WhitelistUpdated(account, true);
-        }
-
         emit AdminUpdated(account, true);
     }
 

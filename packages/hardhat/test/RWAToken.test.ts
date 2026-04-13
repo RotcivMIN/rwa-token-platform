@@ -280,11 +280,11 @@ describe("RWAToken", function () {
   //  7. ADMIN MANAGEMENT — 4 tests
   // ================================================================
   describe("Admin Management", function () {
-    it("Should allow owner to add an admin", async function () {
+    it("Should allow owner to add an admin (whitelist is independent)", async function () {
       await rwaToken.addAdmin(addr1.address);
       expect(await rwaToken.isAdmin(addr1.address)).to.be.true;
-      // Admin should also be auto-whitelisted
-      expect(await rwaToken.isWhitelisted(addr1.address)).to.be.true;
+      // Admin and whitelist are decoupled — admin must be whitelisted separately
+      expect(await rwaToken.isWhitelisted(addr1.address)).to.be.false;
     });
 
     it("Should allow admin to perform operational functions (mint, whitelist, pause)", async function () {
