@@ -8,6 +8,7 @@ A full-stack RWA (Real World Asset) ETF tokenization platform demonstrating comp
 
 - **ERC-20 Token** with whitelist-gated transfers (KYC compliance)
 - **Multi-Admin Management** — owner can grant/revoke admin privileges via on-chain roles
+- **Decoupled Admin & Whitelist** — admin privileges and whitelist are independent; adding an admin does NOT auto-whitelist, ensuring explicit control over both permissions
 - **tryTransfer()** — soft-fail transfers that log blocked attempts on-chain (audit trail)
 - **Mint / Burn** — restricted to admin, modeling real-world creation/redemption
 - **Pausable** — emergency circuit breaker for all token operations
@@ -19,7 +20,7 @@ A full-stack RWA (Real World Asset) ETF tokenization platform demonstrating comp
 
 | Layer | Technology |
 |-------|-----------|
-| Smart Contract | Solidity 0.8.28, OpenZeppelin v5, Hardhat |
+| Smart Contract | Solidity 0.8.30, OpenZeppelin v5, Hardhat |
 | Frontend | Next.js 15, React 19, wagmi, viem, DaisyUI |
 | Network | Ethereum Sepolia Testnet |
 | RPC | Infura (primary) + Alchemy (fallback) |
@@ -28,10 +29,15 @@ A full-stack RWA (Real World Asset) ETF tokenization platform demonstrating comp
 
 ## Contract
 
-- **Address**: [`0x27A914D3f148fCD6b124A072a553a2e4625fbC64`](https://sepolia.etherscan.io/address/0x27A914D3f148fCD6b124A072a553a2e4625fbC64) (Sepolia)
+- **Address**: [`0xaa6203B5E81E5D5680f24a5d3C106aE5112f65b6`](https://sepolia.etherscan.io/address/0xaa6203B5E81E5D5680f24a5d3C106aE5112f65b6) (Sepolia)
 - **Token**: RWAG (RWA ETF Gold Token)
 - **Initial Supply**: 1,000,000 RWAG
 - **Tests**: 23 test cases across 7 categories, 100% passing
+
+### Design Decisions
+
+- **Admin ≠ Whitelist**: Admin privileges and whitelist membership are fully decoupled. When adding an admin, the operator must separately whitelist them if token transfer capability is needed. This explicit design prevents accidental privilege escalation and ensures operational clarity — removing an admin reminds operators to also review whitelist status.
+- **tryTransfer()**: Returns `(bool, string)` instead of reverting, enabling on-chain audit trails for blocked transfers without breaking caller contracts.
 
 ## Quick Start
 
