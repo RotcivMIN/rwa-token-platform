@@ -36,3 +36,11 @@ opencode.json
 dist
 
 push_to_github.bat
+
+# Chinese documentation (internal use only, not for public repo)
+*教程*.md
+*手册*.md
+*操作指南*.md
+
+# logs
+*.log
