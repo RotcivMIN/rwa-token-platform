@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     RWAToken: {
-      address: "0x27A914D3f148fCD6b124A072a553a2e4625fbC64",
+      address: "0xaa6203B5E81E5D5680f24a5d3C106aE5112f65b6",
       abi: [
         {
           inputs: [
@@ -848,7 +848,7 @@ const deployedContracts = {
         removeFromWhitelist: "contracts/interfaces/IRWAToken.sol",
         tryTransfer: "contracts/interfaces/IRWAToken.sol",
       },
-      deployedOnBlock: 10648406,
+      deployedOnBlock: 10649902,
     },
   },
 } as const;
