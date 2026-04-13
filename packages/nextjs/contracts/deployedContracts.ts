@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     RWAToken: {
-      address: "0xd595461EAfBfcfCa68b81e95a5AEf79356A4705C",
+      address: "0x27A914D3f148fCD6b124A072a553a2e4625fbC64",
       abi: [
         {
           inputs: [
@@ -152,6 +152,25 @@ const deployedContracts = {
           ],
           name: "OwnableUnauthorizedAccount",
           type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "bool",
+              name: "status",
+              type: "bool",
+            },
+          ],
+          name: "AdminUpdated",
+          type: "event",
         },
         {
           anonymous: false,
@@ -350,6 +369,19 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "addAdmin",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
           name: "addToWhitelist",
           outputs: [],
           stateMutability: "nonpayable",
@@ -539,6 +571,25 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "isAdmin",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
           name: "isWhitelisted",
           outputs: [
             {
@@ -612,6 +663,19 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "removeAdmin",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -772,16 +836,19 @@ const deployedContracts = {
         renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         paused: "@openzeppelin/contracts/utils/Pausable.sol",
+        addAdmin: "contracts/interfaces/IRWAToken.sol",
         addToWhitelist: "contracts/interfaces/IRWAToken.sol",
         burn: "contracts/interfaces/IRWAToken.sol",
         getBlockedTransactionCount: "contracts/interfaces/IRWAToken.sol",
         getWhitelistCount: "contracts/interfaces/IRWAToken.sol",
+        isAdmin: "contracts/interfaces/IRWAToken.sol",
         isWhitelisted: "contracts/interfaces/IRWAToken.sol",
         mint: "contracts/interfaces/IRWAToken.sol",
+        removeAdmin: "contracts/interfaces/IRWAToken.sol",
         removeFromWhitelist: "contracts/interfaces/IRWAToken.sol",
         tryTransfer: "contracts/interfaces/IRWAToken.sol",
       },
-      deployedOnBlock: 10518157,
+      deployedOnBlock: 10648406,
     },
   },
 } as const;

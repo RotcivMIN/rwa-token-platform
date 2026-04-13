@@ -47,6 +47,9 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     /// @dev 白名单映射：address → 是否在白名单中
     mapping(address => bool) private _whitelist;
 
+    /// @dev 管理员映射：address → 是否为管理员（owner 始终为管理员）
+    mapping(address => bool) private _admins;
+
     /// @dev 白名单地址数组（用于链上枚举遍历）
     address[] private _whitelistedAddresses;
 
@@ -89,11 +92,54 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     }
 
     // ═══════════════════════════════════════════════════
+    //           权限修饰符 (Access Modifier)
+    // ═══════════════════════════════════════════════════
+
+    /// @dev owner 或已授权 admin 均可调用
+    modifier onlyAdmin() {
+        require(msg.sender == owner() || _admins[msg.sender], "RWAToken: caller is not admin");
+        _;
+    }
+
+    // ═══════════════════════════════════════════════════
+    //         管理员管理 (Admin Management)
+    // ═══════════════════════════════════════════════════
+
+    /// @inheritdoc IRWAToken
+    function addAdmin(address account) external onlyOwner {
+        require(account != address(0), "RWAToken: cannot add zero address as admin");
+        require(!_admins[account], "RWAToken: already an admin");
+
+        _admins[account] = true;
+
+        // 管理员自动加入白名单（如果尚未加入）
+        if (!_whitelist[account]) {
+            _whitelist[account] = true;
+            _whitelistedAddresses.push(account);
+            emit WhitelistUpdated(account, true);
+        }
+
+        emit AdminUpdated(account, true);
+    }
+
+    /// @inheritdoc IRWAToken
+    function removeAdmin(address account) external onlyOwner {
+        require(_admins[account], "RWAToken: not an admin");
+        _admins[account] = false;
+        emit AdminUpdated(account, false);
+    }
+
+    /// @inheritdoc IRWAToken
+    function isAdmin(address account) external view returns (bool) {
+        return account == owner() || _admins[account];
+    }
+
+    // ═══════════════════════════════════════════════════
     //         白名单管理 (Whitelist Management)
     // ═══════════════════════════════════════════════════
 
     /// @inheritdoc IRWAToken
-    function addToWhitelist(address account) external onlyOwner {
+    function addToWhitelist(address account) external onlyAdmin {
         require(account != address(0), "RWAToken: cannot whitelist zero address");
         require(!_whitelist[account], "RWAToken: already whitelisted");
 
@@ -104,7 +150,7 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     }
 
     /// @inheritdoc IRWAToken
-    function removeFromWhitelist(address account) external onlyOwner {
+    function removeFromWhitelist(address account) external onlyAdmin {
         require(_whitelist[account], "RWAToken: not whitelisted");
 
         _whitelist[account] = false;
@@ -143,7 +189,7 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     // ═══════════════════════════════════════════════════
 
     /// @inheritdoc IRWAToken
-    function mint(address to, uint256 amount) external onlyOwner {
+    function mint(address to, uint256 amount) external onlyAdmin {
         require(_whitelist[to], "RWAToken: recipient not whitelisted");
         require(amount > 0, "RWAToken: mint amount must be > 0");
 
@@ -152,7 +198,7 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     }
 
     /// @inheritdoc IRWAToken
-    function burn(address from, uint256 amount) external onlyOwner {
+    function burn(address from, uint256 amount) external onlyAdmin {
         require(_whitelist[from], "RWAToken: target not whitelisted");
         require(amount > 0, "RWAToken: burn amount must be > 0");
 
@@ -165,12 +211,12 @@ contract RWAToken is ERC20, Ownable, Pausable, IRWAToken {
     // ═══════════════════════════════════════════════════
 
     /// @notice 紧急暂停所有代币转移（仅管理员）
-    function pause() external onlyOwner {
+    function pause() external onlyAdmin {
         _pause();
     }
 
     /// @notice 恢复代币转移（仅管理员）
-    function unpause() external onlyOwner {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 

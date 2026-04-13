@@ -82,10 +82,9 @@ describe("RWAToken", function () {
     });
 
     it("Should revert when non-owner tries to add to whitelist", async function () {
-      // OZ v5 Ownable reverts with OwnableUnauthorizedAccount(caller)
-      await expect(rwaToken.connect(addr1).addToWhitelist(addr2.address)).to.be.revertedWithCustomError(
-        rwaToken,
-        "OwnableUnauthorizedAccount",
+      // Non-admin, non-owner should revert with custom message
+      await expect(rwaToken.connect(addr1).addToWhitelist(addr2.address)).to.be.revertedWith(
+        "RWAToken: caller is not admin",
       );
     });
 
@@ -274,6 +273,59 @@ describe("RWAToken", function () {
       // Transfer should work again
       await rwaToken.connect(addr1).transfer(addr2.address, transferAmount);
       expect(await rwaToken.balanceOf(addr2.address)).to.equal(transferAmount);
+    });
+  });
+
+  // ================================================================
+  //  7. ADMIN MANAGEMENT — 4 tests
+  // ================================================================
+  describe("Admin Management", function () {
+    it("Should allow owner to add an admin", async function () {
+      await rwaToken.addAdmin(addr1.address);
+      expect(await rwaToken.isAdmin(addr1.address)).to.be.true;
+      // Admin should also be auto-whitelisted
+      expect(await rwaToken.isWhitelisted(addr1.address)).to.be.true;
+    });
+
+    it("Should allow admin to perform operational functions (mint, whitelist, pause)", async function () {
+      await rwaToken.addAdmin(addr1.address);
+
+      // Admin can whitelist
+      await rwaToken.connect(addr1).addToWhitelist(addr2.address);
+      expect(await rwaToken.isWhitelisted(addr2.address)).to.be.true;
+
+      // Admin can mint
+      const mintAmount = ethers.parseEther("1000");
+      await rwaToken.connect(addr1).mint(addr2.address, mintAmount);
+      expect(await rwaToken.balanceOf(addr2.address)).to.equal(mintAmount);
+
+      // Admin can pause/unpause
+      await rwaToken.connect(addr1).pause();
+      expect(await rwaToken.paused()).to.be.true;
+      await rwaToken.connect(addr1).unpause();
+      expect(await rwaToken.paused()).to.be.false;
+    });
+
+    it("Should NOT allow admin to add/remove other admins", async function () {
+      await rwaToken.addAdmin(addr1.address);
+      // Admin cannot add another admin — only owner can
+      await expect(rwaToken.connect(addr1).addAdmin(addr2.address)).to.be.revertedWithCustomError(
+        rwaToken,
+        "OwnableUnauthorizedAccount",
+      );
+    });
+
+    it("Should allow owner to remove admin", async function () {
+      await rwaToken.addAdmin(addr1.address);
+      expect(await rwaToken.isAdmin(addr1.address)).to.be.true;
+
+      await rwaToken.removeAdmin(addr1.address);
+      expect(await rwaToken.isAdmin(addr1.address)).to.be.false;
+
+      // Removed admin can no longer mint
+      await expect(rwaToken.connect(addr1).mint(addr2.address, ethers.parseEther("100"))).to.be.revertedWith(
+        "RWAToken: caller is not admin",
+      );
     });
   });
 });

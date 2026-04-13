@@ -18,6 +18,11 @@ interface IRWAToken {
     //                    事件 (Events)
     // ═══════════════════════════════════════════════════
 
+    /// @notice 管理员权限变更时触发
+    /// @param account 目标地址
+    /// @param status  true=授予管理员, false=撤销管理员
+    event AdminUpdated(address indexed account, bool status);
+
     /// @notice 白名单状态变更时触发
     /// @param account 目标地址
     /// @param status  true=加入白名单, false=移出白名单
@@ -40,6 +45,23 @@ interface IRWAToken {
     /// @param amount 销毁数量（wei 单位）
     /// @param reason 销毁原因说明
     event TokensBurned(address indexed from, uint256 amount, string reason);
+
+    // ═══════════════════════════════════════════════════
+    //              管理员管理 (Admin Management)
+    // ═══════════════════════════════════════════════════
+
+    /// @notice 添加管理员（仅合约所有者）
+    /// @param account 要授予管理员权限的地址
+    function addAdmin(address account) external;
+
+    /// @notice 移除管理员（仅合约所有者）
+    /// @param account 要撤销管理员权限的地址
+    function removeAdmin(address account) external;
+
+    /// @notice 查询地址是否为管理员
+    /// @param account 查询的地址
+    /// @return 是否为管理员（owner 始终返回 true）
+    function isAdmin(address account) external view returns (bool);
 
     // ═══════════════════════════════════════════════════
     //               白名单管理 (Whitelist)

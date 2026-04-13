@@ -12,6 +12,7 @@ import {
   FireIcon,
   PaperAirplaneIcon,
   ShieldCheckIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
@@ -46,6 +47,11 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Transactions",
     href: "/transactions",
     icon: <ArrowsRightLeftIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Admin",
+    href: "/admin",
+    icon: <UserGroupIcon className="h-4 w-4" />,
   },
   {
     label: "Debug",
