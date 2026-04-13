@@ -137,8 +137,8 @@ const AdminManager: NextPage = () => {
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {adminEvents.slice(0, 20).map((event, idx) => {
-                const args = event.args as { account?: `0x${string}`; isAdded?: boolean } | undefined;
-                const isAdded = args?.isAdded;
+                const args = event.args as { account?: `0x${string}`; status?: boolean } | undefined;
+                const isAdded = args?.status;
                 return (
                   <div
                     key={`${event.transactionHash}-${event.logIndex}-${idx}`}
